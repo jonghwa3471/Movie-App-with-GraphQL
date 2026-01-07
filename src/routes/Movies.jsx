@@ -1,3 +1,29 @@
+import { gql } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
+import { useEffect, useState } from "react";
+
 export default function Movies() {
-  return <div>This is a list of movies.</div>;
+  const [movies, setMovies] = useState([]);
+  const client = useApolloClient();
+  useEffect(() => {
+    client
+      .query({
+        query: gql`
+          {
+            allMovies {
+              title
+              id
+            }
+          }
+        `,
+      })
+      .then((result) => setMovies(result.data.allMovies));
+  }, [client]);
+  return (
+    <div>
+      {movies.map((movie) => (
+        <li key={movie.id}>{movie.title}</li>
+      ))}
+    </div>
+  );
 }
